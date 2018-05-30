@@ -13,7 +13,13 @@ class SwipeLabelView: UIView {
     }
     didSet {
       state?.subscribe(client: self)
-      labels.first!.text = state?.selectedDate.format(with: .full)
+      
+      let dateFormatter = DateFormatter()
+      dateFormatter.dateFormat = "LLLL"
+      
+      if let date = state?.selectedDate {
+          labels.first!.text = dateFormatter.string(from: date)
+      }
     }
   }
 
@@ -47,7 +53,7 @@ class SwipeLabelView: UIView {
   func configure() {
     for _ in 0...1 {
       let label = UILabel()
-      label.textAlignment = .center
+      label.textAlignment = .left
       labels.append(label)
       addSubview(label)
     }
@@ -92,7 +98,9 @@ extension SwipeLabelView: DayViewStateUpdating {
   func move(from oldDate: Date, to newDate: Date) {
     guard newDate != oldDate
       else { return }
-    labels.last!.text = newDate.format(with: .full)
+    
+    
+    labels.last!.text = newDate.format(with: "LLLL")
     let direction: AnimationDirection = newDate.isLater(than: oldDate) ? .Forward : .Backward
     animate(direction)
   }
